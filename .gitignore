@@ -1,0 +1,10 @@
+# Ignore all __pycache__
+
+__pycache__/
+
+# Ignore all .out files
+
+*.out
+
+
+

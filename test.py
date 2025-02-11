@@ -7,6 +7,8 @@ from CKPT_PTH import LLAVA_MODEL_PATH
 import os
 from torch.nn.functional import interpolate
 
+print("Starting the script")
+
 if torch.cuda.device_count() >= 2:
     SUPIR_device = 'cuda:0'
     LLaVA_device = 'cuda:1'
@@ -41,6 +43,7 @@ parser.add_argument("--n_prompt", type=str,
                             'cartoon, CG Style, 3D render, unreal engine, blurring, dirty, messy, '
                             'worst quality, low quality, frames, watermark, signature, jpeg artifacts, '
                             'deformed, lowres, over-smooth')
+parser.add_argument("--caption", type=str, default='', help='custom caption provided by user')
 parser.add_argument("--color_fix_type", type=str, default='Wavelet', choices=["None", "AdaIn", "Wavelet"])
 parser.add_argument("--linear_CFG", action='store_true', default=True)
 parser.add_argument("--linear_s_stage2", action='store_true', default=False)
@@ -92,7 +95,13 @@ for img_pth in os.listdir(args.img_dir):
         captions = llava_agent.gen_image_caption([clean_PIL_img])
     else:
         captions = ['']
-    print(captions)
+
+    # MPDIFICATION: add custom caption
+    if args.caption != '':
+        captions = [args.caption]
+
+    print("Using caption:", captions)
+
 
     # # step 3: Diffusion Process
     samples = model.batchify_sample(LQ_img, captions, num_steps=args.edm_steps, restoration_scale=args.s_stage1, s_churn=args.s_churn,

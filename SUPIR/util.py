@@ -2,15 +2,49 @@ import os
 import torch
 import numpy as np
 import cv2
+import getpass
 from PIL import Image
 from torch.nn.functional import interpolate
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, dictconfig, listconfig
 from sgm.util import instantiate_from_config
 
 
 def get_state_dict(d):
     return d.get('state_dict', d)
 
+def get_username():
+    try:
+        return os.getlogin()
+    except:
+        return getpass.getuser()
+
+def replace_dict(s, sub_dict):
+    for k, v in sub_dict.items():
+        s = s.replace(k, v)
+    return s
+
+def update_paths(cfg, sub_dict):
+    print("Updating paths")
+    print(type(cfg), isinstance(cfg, dict))
+    if isinstance(cfg, dict) or isinstance(cfg, dictconfig.DictConfig):
+        for key, value in cfg.items():
+            if isinstance(value, str):
+                cfg[key] = replace_dict(value, sub_dict)
+            elif isinstance(value, (dict, list)):
+                update_paths(value)
+    elif isinstance(cfg, list) or isinstance(cfg, listconfig.ListConfig):
+        for i, value in enumerate(cfg):
+            if isinstance(value, str):
+                cfg[i] = replace_dict(value, sub_dict)
+            elif isinstance(value, (dict, list)):
+                update_paths(value)
+
+def load_cfg(config_path):
+    config = OmegaConf.load(config_path)
+    sub_dict = {"<username>": get_username()}
+    update_paths(config, sub_dict)
+    return config
+    
 
 def load_state_dict(ckpt_path, location='cpu'):
     _, extension = os.path.splitext(ckpt_path)
@@ -25,14 +59,15 @@ def load_state_dict(ckpt_path, location='cpu'):
 
 
 def create_model(config_path):
-    config = OmegaConf.load(config_path)
+    config = load_cfg(config_path)
     model = instantiate_from_config(config.model).cpu()
     print(f'Loaded model config from [{config_path}]')
     return model
 
 
 def create_SUPIR_model(config_path, SUPIR_sign=None, load_default_setting=False):
-    config = OmegaConf.load(config_path)
+    config = load_cfg(config_path)
+    print(OmegaConf.to_yaml(config))
     model = instantiate_from_config(config.model).cpu()
     print(f'Loaded model config from [{config_path}]')
     if config.SDXL_CKPT is not None:
