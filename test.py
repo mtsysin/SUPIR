@@ -18,8 +18,8 @@ else:
 
 # hyparams here
 parser = argparse.ArgumentParser()
-parser.add_argument("--img_dir", type=str)
-parser.add_argument("--save_dir", type=str)
+parser.add_argument("--img_dir", type=str, default='./testdata/RealPhoto60/LQ/')
+parser.add_argument("--save_dir", type=str, default='./results/test')
 parser.add_argument("--upscale", type=int, default=1)
 parser.add_argument("--SUPIR_sign", type=str, default='Q', choices=['F', 'Q'])
 parser.add_argument("--seed", type=int, default=1234)
