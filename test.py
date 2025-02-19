@@ -1,10 +1,14 @@
+import os
+#To make HF hub not fill the home/personal diskspace
+os.environ["HF_HOME"] = "/scratch/gilbreth/lwickrem/SUPIR/SUPIR/tmp/custom_cache"
+
 import torch.cuda
 import argparse
 from SUPIR.util import create_SUPIR_model, PIL2Tensor, Tensor2PIL, convert_dtype
 from PIL import Image
 from llava.llava_agent import LLavaAgent
 from CKPT_PTH import LLAVA_MODEL_PATH
-import os
+
 from torch.nn.functional import interpolate
 
 if torch.cuda.device_count() >= 2:
@@ -18,8 +22,8 @@ else:
 
 # hyparams here
 parser = argparse.ArgumentParser()
-parser.add_argument("--img_dir", type=str, default='./testdata/RealPhoto60/LQ/')
-parser.add_argument("--save_dir", type=str, default='./results/test')
+parser.add_argument("--img_dir", type=str, default='./testdata/currenttest/')
+parser.add_argument("--save_dir", type=str, default='./results/currenttest')
 parser.add_argument("--upscale", type=int, default=1)
 parser.add_argument("--SUPIR_sign", type=str, default='Q', choices=['F', 'Q'])
 parser.add_argument("--seed", type=int, default=1234)
@@ -56,7 +60,8 @@ parser.add_argument("--decoder_tile_size", type=int, default=64)
 parser.add_argument("--load_8bit_llava", action='store_true', default=False)
 args = parser.parse_args()
 print(args)
-use_llava = not args.no_llava
+# use_llava = not args.no_llava 
+use_llava = False
 
 # load SUPIR
 model = create_SUPIR_model('options/SUPIR_v0.yaml', SUPIR_sign=args.SUPIR_sign)
@@ -91,7 +96,7 @@ for img_pth in os.listdir(args.img_dir):
     if use_llava:
         captions = llava_agent.gen_image_caption([clean_PIL_img])
     else:
-        captions = ['']
+        captions = ['The image depicts a bustling city street filled with a large crowd of people walking around. The crowd is diverse, with individuals of various ages and appearances. Some people are walking alone, while others are in groups or pairs. There are also a few chairs scattered throughout the scene. A truck can be seen parked on the side of the street, and a handbag is visible in the crowd, likely belonging to one of the pedestrians. A board on the right corner has a light blue background with a white English font. It reads ISTANBUL BATUM SANAT.']
     print(captions)
 
     # # step 3: Diffusion Process
