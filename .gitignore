@@ -6,5 +6,10 @@ __pycache__/
 
 *.out
 
+# Ignore dataset:
+
+test_data/
+results-Q/
+run/
 
 

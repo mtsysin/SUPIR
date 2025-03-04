@@ -6,7 +6,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -u test.py\
     --SUPIR_sign Q\
     --upscale 2\
     --no_llava\
-    --caption "A highway interchange in rural Indiana."
+    --caption "A Mercedes car"
 
 # sbatch --nodes=1 --gpus-per-node=1 run_script.sh   scontrol show job      squeue -u mtsysin
 # Specific node sbatch --nodes=1 --ntasks=16 --gres=gpu:1 --constraint=A myjobsubmissionfile.sub

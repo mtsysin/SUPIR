@@ -12,6 +12,4 @@ nvidia-smi
 # Change to the directory from which you originally submitted this job.
 cd $SLURM_SUBMIT_DIR
 
-
-
 source run.sh
