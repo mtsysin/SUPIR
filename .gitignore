@@ -2,4 +2,3 @@ checkpoints/
 testdata/
 results/
 **/__pycache__/
-tmp/custom_cache/
