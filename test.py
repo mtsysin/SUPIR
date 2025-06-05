@@ -22,8 +22,8 @@ else:
 
 # hyparams here
 parser = argparse.ArgumentParser()
-parser.add_argument("--img_dir", type=str, default='./testdata/currenttest/')
-parser.add_argument("--save_dir", type=str, default='./results/currenttest')
+parser.add_argument("--img_dir", type=str, default='/scratch/gilbreth/lwickrem/data/motion_blur_test_img_crop_xijun/')
+parser.add_argument("--save_dir", type=str, default='./results/motion_blur_xijun/')
 parser.add_argument("--upscale", type=int, default=1)
 parser.add_argument("--SUPIR_sign", type=str, default='Q', choices=['F', 'Q'])
 parser.add_argument("--seed", type=int, default=1234)
@@ -61,7 +61,7 @@ parser.add_argument("--load_8bit_llava", action='store_true', default=False)
 args = parser.parse_args()
 print(args)
 # use_llava = not args.no_llava 
-use_llava = False
+use_llava = True
 
 # load SUPIR
 model = create_SUPIR_model('options/SUPIR_v0.yaml', SUPIR_sign=args.SUPIR_sign)
@@ -96,7 +96,8 @@ for img_pth in os.listdir(args.img_dir):
     if use_llava:
         captions = llava_agent.gen_image_caption([clean_PIL_img])
     else:
-        captions = ['The image depicts a bustling city street filled with a large crowd of people walking around. The crowd is diverse, with individuals of various ages and appearances. Some people are walking alone, while others are in groups or pairs. There are also a few chairs scattered throughout the scene. A truck can be seen parked on the side of the street, and a handbag is visible in the crowd, likely belonging to one of the pedestrians. A board on the right corner has a light blue background with a white English font. It reads ISTANBUL BATUM SANAT.']
+        captions = ['caption here']
+
     print(captions)
 
     # # step 3: Diffusion Process
